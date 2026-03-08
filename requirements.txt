@@ -11,3 +11,4 @@ fastapi
 pydantic
 python-dotenv
 uvicorn
+sentence-transformers
