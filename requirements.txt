@@ -10,3 +10,4 @@ arxiv
 fastapi
 pydantic
 python-dotenv
+uvicorn
