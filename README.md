@@ -1,3 +1,11 @@
+---
+title: Self Aware RAG
+emoji: 🧠
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
 # Self-Aware-Rag🦾 : Production-Grade Agentic Research Assistant
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue) ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688) ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED) ![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-black) ![LangGraph](https://img.shields.io/badge/LangGraph-Agent-orange)
