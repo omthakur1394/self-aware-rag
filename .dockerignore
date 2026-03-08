@@ -1,0 +1,12 @@
+
+.git
+.gitignore
+
+venv/
+.venv/
+/papers/
+*.pdf
+__pycache__/
+*.log
+README.md
+LICENSE

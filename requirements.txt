@@ -1,0 +1,12 @@
+langchain-core
+langgraph
+langchain-groq
+langchain-huggingface
+langchain-pinecone
+pinecone-client
+langchain-community
+wikipedia
+arxiv
+fastapi
+pydantic
+python-dotenv
