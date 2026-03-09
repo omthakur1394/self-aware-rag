@@ -23,7 +23,6 @@ async def root():
 
 @app.post("/chat")
 async def chat(request:chat_bot):
-    # THE FIX: Move the import here so it doesn't block startup!
     from src.graph import app_graph
     
     config = {"configurable": {"thread_id": request.thread_id}}
