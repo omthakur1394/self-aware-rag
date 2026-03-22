@@ -2,8 +2,8 @@ from typing import List
 from pydantic import BaseModel
 from langchain_core.documents import Document
 from langchain_community.retrievers import WikipediaRetriever, ArxivRetriever
-from cofig import llm
-from vector_store import get_retriever
+from .cofig import llm
+from .vector_store import get_retriever
 
 retriever = get_retriever()
 wiki_retriever = WikipediaRetriever(top_k_results=2)

@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, END
 from pymongo import MongoClient
 from langgraph.checkpoint.mongodb import MongoDBSaver
-from agent import (
+from .agent import (
     RAGReflectionState, retrieve_docs, generate_answer, 
     reflect_on_answer, rewrite_query, finalize
 )
