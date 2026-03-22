@@ -14,3 +14,5 @@ uvicorn
 sentence-transformers
 langgraph-checkpoint-mongodb
 pymongo
+langchain-community
+rank_bm25
