@@ -1,6 +1,6 @@
 langchain-core
 langgraph
-langchain-groq
+langchain-openai
 langchain-huggingface
 langchain-pinecone
 pinecone-client
@@ -12,3 +12,5 @@ pydantic
 python-dotenv
 uvicorn
 sentence-transformers
+langgraph-checkpoint-mongodb
+pymongo

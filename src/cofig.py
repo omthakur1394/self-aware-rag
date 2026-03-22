@@ -1,9 +1,9 @@
 import os 
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 load_dotenv()
-os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
-llm = ChatGroq(
-    model="openai/gpt-oss-120b",temperature=0.2
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+llm = ChatOpenAI(
+    model="gpt-5-nano-2025-08-07",temperature=0.2
 )
 
