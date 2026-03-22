@@ -41,8 +41,9 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
     context = "\n\n".join(context_parts)
     
     prompt = (
-        f"Use the following context to answer the question. "
-        f"You MUST cite the source index (e.g., [0], [1]) for every fact you state.\n\n"
+        "You are a strict, factual AI. Answer using ONLY the provided Context.\n"
+        "If the context is insufficient, state 'I cannot answer this based on the documents.'\n"
+        "Every sentence MUST end with a source index (e.g., [0], [1]).\n\n"
         f"Context:\n{context}\n\n"
         f"Question:\n{state.question}"
     )
@@ -51,13 +52,19 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
     return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
 
 def reflect_on_answer(state: RAGReflectionState) -> RAGReflectionState:
-    prompt = f"Reflect on the following answer. State YES if complete and accurate with citations, or NO with explanation.\nQuestion: {state.question}\nAnswer: {state.answer}\nRespond like:\nReflection: YES or NO\nExplanation: ..."
+    prompt = (
+        f"Review the Answer for the Question.\n"
+        f"1. Does it contain bracketed citations like [0]?\n"
+        f"2. Is it based ONLY on the context without outside facts?\n"
+        f"Respond ONLY with 'Reflection: YES' or 'Reflection: NO' plus explanation.\n\n"
+        f"Question: {state.question}\nAnswer: {state.answer}"
+    )
     result = llm.invoke(prompt).content
     is_ok = "reflection: yes" in result.lower()
     return state.model_copy(update={"reflection": result, "revised": not is_ok})
 
 def rewrite_query(state: RAGReflectionState) -> RAGReflectionState:
-    prompt = f"Original question: {state.question}\nFailed because: {state.reflection}\nWrite a single optimized search query. Return ONLY the query."
+    prompt = f"Question: {state.question}\nFailure: {state.reflection}\nWrite an optimized search query. Return ONLY the query."
     new_query = llm.invoke(prompt).content.strip()
     return state.model_copy(update={"search_query": new_query})
 
