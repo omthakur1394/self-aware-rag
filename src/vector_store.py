@@ -28,7 +28,7 @@ def get_retriever(documents=None):
             embeddings=embeddings,
             sparse_encoder=bm25_encoder,
             index=index,
-            top_k=5,
+            top_k=20,
             alpha=0.5 
         )
         
