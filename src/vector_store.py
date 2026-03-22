@@ -5,7 +5,7 @@ from pinecone import Pinecone
 from langchain_community.retrievers import PineconeHybridSearchRetriever
 from pinecone_text.sparse import BM25Encoder
 
-embeddings = HuggingFaceEmbeddings(model_name="google/gemma-embedding-300m")
+embeddings = HuggingFaceEmbeddings(model="google/embeddinggemma-300m")
 
 def get_retriever(documents=None):
     pinecone_db = PineconeVectorStore(
