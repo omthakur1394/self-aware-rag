@@ -1,10 +1,9 @@
 import os
 from langchain_pinecone import PineconeVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever, EnsembleRetriever
 
-embeddings = HuggingFaceEmbeddings(model="google/embeddinggemma-300m")
+embeddings = HuggingFaceEmbeddings(model_name="google/gemma-embedding-300m")
 
 def get_retriever(documents=None):
     pinecone_db = PineconeVectorStore(
