@@ -11,7 +11,7 @@ arxiv_retriever = ArxivRetriever(top_k_results=2)
 
 class RAGReflectionState(BaseModel):
     question: str
-    search_query: str = "" 
+    search_query: str = ""
     retrieved_docs: List[Document] = []
     answer: str = ""
     reflection: str = ""
@@ -21,15 +21,12 @@ class RAGReflectionState(BaseModel):
 def retrieve_docs(state: RAGReflectionState) -> RAGReflectionState:
     query = state.search_query if state.search_query else state.question
     clean_query = query.replace("\x00", "").strip()
-    
     local_docs = retriever.invoke(clean_query)
     wiki_docs = wiki_retriever.invoke(clean_query)
-    
     try:
         arxiv_docs = arxiv_retriever.invoke(clean_query)
     except Exception:
         arxiv_docs = []
-        
     return state.model_copy(update={"retrieved_docs": local_docs + wiki_docs + arxiv_docs})
 
 def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
@@ -37,9 +34,7 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
     for i, doc in enumerate(state.retrieved_docs):
         source_name = doc.metadata.get('source', f'Source {i}')
         context_parts.append(f"[{i}] (Source: {source_name}): {doc.page_content}")
-    
     context = "\n\n".join(context_parts)
-    
     prompt = (
         "You are a strict, factual AI. Answer using ONLY the provided Context.\n"
         "If the context is insufficient, state 'I cannot answer this based on the documents.'\n"
@@ -47,7 +42,6 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
         f"Context:\n{context}\n\n"
         f"Question:\n{state.question}"
     )
-    
     answer = llm.invoke(prompt).content.strip()
     return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
 
