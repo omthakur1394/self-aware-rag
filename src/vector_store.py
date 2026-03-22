@@ -1,7 +1,9 @@
 import os
 from langchain_pinecone import PineconeVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.retrievers import BM25Retriever, EnsembleRetriever
+from pinecone import Pinecone
+from langchain_community.retrievers import PineconeHybridSearchRetriever
+from pinecone_text.sparse import BM25Encoder
 
 embeddings = HuggingFaceEmbeddings(model_name="google/gemma-embedding-300m")
 
@@ -18,12 +20,18 @@ def get_retriever(documents=None):
     )
 
     if documents:
-        sparse_retriever = BM25Retriever.from_documents(documents)
-        sparse_retriever.k = 5
+        bm25_encoder = BM25Encoder().default() 
+        pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+        index = pc.Index("bionic-rag-cloud")
         
-        return EnsembleRetriever(
-            retrievers=[dense_retriever, sparse_retriever],
-            weights=[0.5, 0.5]
+        ensemble_retriever = PineconeHybridSearchRetriever(
+            embeddings=embeddings,
+            sparse_encoder=bm25_encoder,
+            index=index,
+            top_k=5,
+            alpha=0.5 
         )
+        
+        return ensemble_retriever
     
     return dense_retriever

@@ -16,3 +16,8 @@ sentence-transformers
 langgraph-checkpoint-mongodb
 pymongo
 rank_bm25
+langchain-pinecone
+langchain-huggingface
+langchain-community
+pinecone-client
+pinecone-text
