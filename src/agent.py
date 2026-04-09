@@ -36,12 +36,17 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
         context_parts.append(f"[{i}] (Source: {source_name}): {doc.page_content}")
     context = "\n\n".join(context_parts)
     prompt = (
-        "You are a strict, factual AI. Answer using ONLY the provided Context.\n"
+        "You are a strict, factual AI research assistant with access to 249 research papers.\n"
+        "Answer using ONLY the provided Context in a detailed and comprehensive way.\n"
+        "Your answer MUST be at least 3-4 paragraphs long.\n"
+        "Cover: main concept, how it works, why it matters, and any key details from the papers.\n"
         "If the context is insufficient, state 'I cannot answer this based on the documents.'\n"
         "Every sentence MUST end with a source index (e.g., [0], [1]).\n\n"
         f"Context:\n{context}\n\n"
         f"Question:\n{state.question}"
     )
+    answer = llm.invoke(prompt).content.strip()
+    return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
     answer = llm.invoke(prompt).content.strip()
     return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
 

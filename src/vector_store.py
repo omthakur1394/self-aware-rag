@@ -4,6 +4,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from pinecone import Pinecone
 from langchain_community.retrievers import PineconeHybridSearchRetriever
 from pinecone_text.sparse import BM25Encoder
+from dotenv import load_dotenv
+load_dotenv()
 
 embeddings = HuggingFaceEmbeddings(model_name="google/embeddinggemma-300m")
 
