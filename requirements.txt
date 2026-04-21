@@ -21,3 +21,4 @@ langchain-huggingface
 langchain-community
 pinecone-client
 pinecone-text
+duckduckgo-search

@@ -1,13 +1,14 @@
 from typing import List
 from pydantic import BaseModel
 from langchain_core.documents import Document
-from langchain_community.retrievers import WikipediaRetriever, ArxivRetriever
+from langchain_community.retrievers import ArxivRetriever
+from langchain_community.tools import DuckDuckGoSearchRun
 from .cofig import llm
 from .vector_store import get_retriever
 
 retriever = get_retriever()
-wiki_retriever = WikipediaRetriever(top_k_results=2)
 arxiv_retriever = ArxivRetriever(top_k_results=2)
+ddg_search = DuckDuckGoSearchRun()
 
 class RAGReflectionState(BaseModel):
     question: str
@@ -21,13 +22,23 @@ class RAGReflectionState(BaseModel):
 def retrieve_docs(state: RAGReflectionState) -> RAGReflectionState:
     query = state.search_query if state.search_query else state.question
     clean_query = query.replace("\x00", "").strip()
+    
     local_docs = retriever.invoke(clean_query)
-    wiki_docs = wiki_retriever.invoke(clean_query)
+    
+    try:
+        ddg_result = ddg_search.run(clean_query)
+        web_docs = [Document(page_content=ddg_result, metadata={"source": "DuckDuckGo"})]
+    except Exception as e:
+        print(f"[WARN] DuckDuckGo search failed: {e}")
+        web_docs = []
+    
     try:
         arxiv_docs = arxiv_retriever.invoke(clean_query)
-    except Exception:
+    except Exception as e:
+        print(f"[WARN] Arxiv retriever failed: {e}")
         arxiv_docs = []
-    return state.model_copy(update={"retrieved_docs": local_docs + wiki_docs + arxiv_docs})
+    
+    return state.model_copy(update={"retrieved_docs": local_docs + web_docs + arxiv_docs})
 
 def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
     context_parts = []
@@ -45,8 +56,6 @@ def generate_answer(state: RAGReflectionState) -> RAGReflectionState:
         f"Context:\n{context}\n\n"
         f"Question:\n{state.question}"
     )
-    answer = llm.invoke(prompt).content.strip()
-    return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
     answer = llm.invoke(prompt).content.strip()
     return state.model_copy(update={"answer": answer, "attempts": state.attempts + 1})
 
